@@ -1,0 +1,89 @@
+Table members {
+  id bigint [pk, increment]
+  email varchar(255) [not null, unique]
+  password_hash varchar(255) [not null]
+  nickname varchar(50) [not null]
+  role varchar(20) [not null, default: 'USER']
+  created_at timestamptz [not null]
+  updated_at timestamptz [not null]
+}
+
+Table legal_cases {
+  id bigint [pk, increment]
+  member_id bigint [not null]
+  case_name varchar(200) [not null]
+  case_type varchar(50) [not null]
+  status varchar(30) [not null]
+  opponent_name varchar(100)
+  description text
+  memo text
+  created_at timestamptz [not null]
+  updated_at timestamptz [not null]
+}
+
+Table documents {
+  id bigint [pk, increment]
+  case_id bigint [not null]
+  original_filename varchar(255) [not null]
+  stored_filename varchar(255) [not null]
+  document_type varchar(50) [not null]
+  content_type varchar(100) [not null]
+  file_size bigint [not null]
+  storage_path text [not null]
+  extracted_text text
+  processing_status varchar(30) [not null]
+  error_message text
+  created_at timestamptz [not null]
+  updated_at timestamptz [not null]
+}
+
+Table questions {
+  id bigint [pk, increment]
+  member_id bigint [not null]
+  case_id bigint
+  question_type varchar(30) [not null]
+  content text [not null]
+  created_at timestamptz [not null]
+}
+
+Table question_documents {
+  question_id bigint [not null]
+  document_id bigint [not null]
+
+  indexes {
+    (question_id, document_id) [pk]
+  }
+}
+
+Table answers {
+  id bigint [pk, increment]
+  question_id bigint [not null]
+  content text [not null]
+  model_name varchar(100)
+  verification_status varchar(30) [not null]
+  created_at timestamptz [not null]
+}
+
+Table sources {
+  id bigint [pk, increment]
+  answer_id bigint [not null]
+  document_id bigint
+  source_type varchar(30) [not null]
+  title varchar(500)
+  reference_number varchar(255)
+  citation_text text
+  source_url text
+  page_number integer
+  verification_status varchar(30) [not null]
+  created_at timestamptz [not null]
+}
+
+Ref: legal_cases.member_id > members.id
+Ref: documents.case_id > legal_cases.id
+Ref: questions.member_id > members.id
+Ref: questions.case_id > legal_cases.id
+Ref: question_documents.question_id > questions.id
+Ref: question_documents.document_id > documents.id
+Ref: answers.question_id > questions.id
+Ref: sources.answer_id > answers.id
+Ref: sources.document_id > documents.id
