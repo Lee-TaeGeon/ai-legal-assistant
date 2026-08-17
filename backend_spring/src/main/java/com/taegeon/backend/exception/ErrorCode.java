@@ -13,6 +13,11 @@ public enum ErrorCode {
             HttpStatus.NOT_FOUND,
             "요청한 데이터를 찾을 수 없습니다."
     ),
+    
+    EMAIL_ALREADY_EXISTS(
+    	    HttpStatus.CONFLICT,
+    	    "이미 가입된 이메일입니다."
+    	),
 
     ACCESS_DENIED(
             HttpStatus.FORBIDDEN,
